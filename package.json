@@ -1,0 +1,1 @@
+{"name":"current-page-lens","private":true,"type":"module","scripts":{"test":"node tests/unit.test.js","test:browser":"node tests/browser.cjs"}}

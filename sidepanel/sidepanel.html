@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Current Page Lens</title><link rel="stylesheet" href="sidepanel.css"></head>
+<body>
+<header><div class="eyebrow">ON-DEVICE · POC 01</div><h1>Current Page Lens</h1><p>현재 페이지에서 사실과 근거를 찾습니다.</p></header>
+<main>
+<section class="controls">
+<label for="preset">분석 프리셋</label><select id="preset"></select>
+<label for="question">질문</label><textarea id="question" rows="3" maxlength="4000" placeholder="현재 페이지에서 중요한 내용을 분석해줘">현재 페이지에서 중요한 내용을 분석해줘</textarea>
+<label for="language">결과 언어</label><select id="language"><option value="en">English · 공식 지원</option><option value="ko">한국어 · 실험 / 공식 미지원</option></select>
+<p class="hint">한국어 페이지·질문도 공식 지원 범위 밖입니다. 첫 호출 검증에는 영어 문서를 권장합니다.</p>
+<div class="options"><label><input type="checkbox" id="images" checked> 페이지 이미지 분석 (최대 4개)</label><label><input type="checkbox" id="viewport"> 현재 보이는 화면도 캡처 (선택)</label><label><input type="checkbox" id="selection"> 선택한 텍스트만 분석</label></div>
+<div class="buttons"><button id="prepare" class="secondary">모델 준비 / 다운로드</button><button id="probe" class="secondary">AI 상태 확인</button></div>
+<div class="buttons"><button id="analyze">현재 페이지 분석</button><button id="again" class="secondary">다시 분석</button><button id="cancel" class="secondary" disabled>취소</button></div>
+<p class="hint">다른 탭으로 이동했다면 해당 탭에서 확장 아이콘을 다시 클릭해주세요.</p>
+</section>
+<section><h2>진행 상태</h2><p id="model-state" aria-live="polite">Chrome Built-in AI 상태 자동 확인 중...</p><p id="model-guidance" class="hint"></p><p id="model-detail" class="warning" hidden></p><ol id="progress" aria-live="polite"></ol><p id="error" role="alert" hidden></p></section>
+<section id="collection" hidden><h2>현재 페이지 / 수집</h2><div id="page-info"></div><details><summary>수집한 원문 및 이미지 메타데이터</summary><pre id="collected-data"></pre></details></section>
+<section id="output" hidden><div class="section-title"><h2>분석 결과</h2><button id="export" class="secondary">JSON 저장</button></div><div id="result-meta"></div><div id="result"></div><details><summary>전체 JSON</summary><pre id="json"></pre></details></section>
+<details class="preset-editor"><summary>사용자 정의 프리셋 관리</summary><label for="edit-id">편집 대상</label><select id="edit-id"><option value="">새 프리셋</option></select><label for="preset-name">이름</label><input id="preset-name" maxlength="80"><label for="preset-prompt">프롬프트</label><textarea id="preset-prompt" rows="6" maxlength="8000" placeholder="어떤 내용을 어떤 관점으로 분석할지 입력해주세요."></textarea><div class="buttons"><button id="save">저장</button><button id="delete" class="secondary" disabled>삭제</button></div><p id="preset-notice" aria-live="polite"></p></details>
+<footer>페이지 내용은 외부 AI에 전송하지 않습니다.<br>프리셋만 로컬 저장하며 원문·결과는 패널 메모리에 보관합니다.</footer>
+</main><script type="module" src="sidepanel.js"></script></body></html>
