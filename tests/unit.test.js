@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {BUILTIN_PRESETS,resultSchema,buildPrompt,validateResult} from '../ai/prompts.js';
 import {chunkSources,mergeResults,ChromeAIEngine,analyzePageData,imageBlob,availabilityLabel} from '../ai/analyzer.js';
 import {listPresets,savePreset,deletePreset} from '../presets/preset-store.js';
+import {isRestrictedPage,pageAccessError} from '../core/page-service.js';
 const store=()=>{let data={};return {get:async key=>({[key]:structuredClone(data[key])}),set:async value=>{data={...data,...structuredClone(value)};}};};
 test('custom presets persist, update and delete without changing builtins',async()=>{
   const storage=store();const p=await savePreset({name:' 제약사항 ',prompt:'Only find constraints'},storage);
@@ -65,4 +66,18 @@ test('probe never downloads; user prepare creates downloadable model and reports
   await engine.prepare({images:false,onProgress:event=>events.push({...event,state:engine.status.text})});
   assert.equal(createCalls,1);assert(events.some(e=>e.message.includes('50%') && e.state==='downloading'));
   assert(events.some(e=>e.message.includes('모델 로딩 중')));assert.equal(engine.status.text,'available');engine.dispose();
+});
+test('restricted pages are distinguished from ordinary HTTP and HTTPS pages',()=>{
+  for(const url of ['chrome://extensions','chrome-extension://abc/page.html','about:blank','devtools://devtools','view-source:https://example.com','https://chromewebstore.google.com/detail/test','https://chrome.google.com/webstore/detail/test']) assert.equal(isRestrictedPage(url),true,url);
+  for(const url of ['http://example.com','https://another.example/page','https://chrome.google.com/docs','https://chromewebstore.google.com.evil.example/page']) assert.equal(isRestrictedPage(url),false,url);
+});
+test('script injection errors never expose raw browser messages',()=>{
+  const raw=new Error('Cannot access contents of the page. Extension manifest must request permission to access the respective host.');
+  assert(pageAccessError(raw,'https://example.com').message.includes('사이트 액세스'));
+  assert(!pageAccessError(raw,'https://example.com').message.includes('Cannot access'));
+  assert(pageAccessError(raw).message.includes('Chrome 보안 정책'));
+  assert(pageAccessError(raw,'chrome://extensions').message.includes('Chrome 보안 정책'));
+  assert(pageAccessError(new Error('Cannot access a chrome:// URL')).message.includes('Chrome 보안 정책'));
+  assert(pageAccessError(new Error('No tab with id: 1'),'https://example.com').message.includes('닫히거나 이동'));
+  assert(!pageAccessError(new Error('internal raw details'),'https://example.com').message.includes('raw details'));
 });

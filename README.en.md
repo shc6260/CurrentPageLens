@@ -48,7 +48,7 @@ No build step or npm installation is required to load the extension.
 5. Click **Load unpacked** and select the project folder.
 6. Click the extension icon on the webpage you want to analyze to open the Side Panel.
 
-After switching tabs or navigating to a different site, click the extension icon again on that tab to grant access. The default shortcut is `Alt+Shift+A`; you can change it at `chrome://extensions/shortcuts`.
+Ordinary HTTP and HTTPS pages can be analyzed after switching tabs or navigating to another site. If you restrict the extension's site access in Chrome, allow access in those settings. After updating an existing installation, reload the extension at `chrome://extensions`. The default shortcut is `Alt+Shift+A`; you can change it at `chrome://extensions/shortcuts`.
 
 ## Usage
 
@@ -108,6 +108,7 @@ The Jira helper identifies the locations of the title, description, comments, an
 - Custom presets are stored in `chrome.storage.local`; collected text and analysis results remain in the panel's memory.
 - Data is exported to a file only when you choose Save JSON.
 - Uses the `activeTab`, `scripting`, `storage`, and `sidePanel` permissions.
+- Uses `http://*/*` and `https://*/*` host permissions to collect ordinary webpages. These permissions do not trigger automatic page collection.
 
 ## Development tests
 

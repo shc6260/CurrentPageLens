@@ -1,10 +1,11 @@
 {
   "manifest_version": 3,
   "name": "Current Page Lens",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "현재 페이지를 Chrome Built-in AI로 로컬 분석합니다.",
   "minimum_chrome_version": "138",
   "permissions": ["activeTab", "scripting", "storage", "sidePanel"],
+  "host_permissions": ["http://*/*", "https://*/*"],
   "background": {"service_worker": "service-worker.js", "type": "module"},
   "action": {"default_title": "현재 페이지 분석 패널 열기"},
   "commands": {"_execute_action": {"suggested_key": {"default": "Alt+Shift+A"}, "description": "분석 패널 열기"}},

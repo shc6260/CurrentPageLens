@@ -1,0 +1,62 @@
+{
+  "testedAt": "2026-09-30T00:40:07.186Z",
+  "browser": "151.0.7922.34",
+  "manifestHostPermissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+  "checks": [
+    {
+      "name": "HTTP extraction",
+      "status": "passed",
+      "url": "http://127.0.0.1:44513/docs.html",
+      "collectedChars": 233
+    },
+    {
+      "name": "HTTPS extraction",
+      "status": "passed",
+      "url": "https://first.example.test/docs.html",
+      "collectedChars": 233
+    },
+    {
+      "name": "Cross-domain navigation extraction",
+      "status": "passed",
+      "url": "https://second.example.test/docs.html",
+      "collectedChars": 233
+    },
+    {
+      "name": "Chrome internal page guidance",
+      "status": "passed",
+      "message": "현재 페이지는 Chrome 보안 정책으로 인해 분석할 수 없습니다. 일반 웹페이지에서 다시 시도해주세요.",
+      "activePageMessage": "현재 페이지는 Chrome 보안 정책으로 인해 분석할 수 없습니다. 일반 웹페이지에서 다시 시도해주세요."
+    },
+    {
+      "name": "Chrome Web Store guidance",
+      "status": "passed",
+      "message": "현재 페이지는 Chrome 보안 정책으로 인해 분석할 수 없습니다. 일반 웹페이지에서 다시 시도해주세요.",
+      "activePageMessage": "현재 페이지는 Chrome 보안 정책으로 인해 분석할 수 없습니다. 일반 웹페이지에서 다시 시도해주세요."
+    },
+    {
+      "name": "Extension page guidance",
+      "status": "passed",
+      "message": "현재 페이지는 Chrome 보안 정책으로 인해 분석할 수 없습니다. 일반 웹페이지에서 다시 시도해주세요. 일반 웹페이지에서도 발생한다면 Chrome 확장 설정의 사이트 액세스를 확인해주세요.",
+      "activePageMessage": "현재 페이지는 Chrome 보안 정책으로 인해 분석할 수 없습니다. 일반 웹페이지에서 다시 시도해주세요. 일반 웹페이지에서도 발생한다면 Chrome 확장 설정의 사이트 액세스를 확인해주세요."
+    },
+    {
+      "name": "Real Built-in AI availability regression",
+      "status": "blocked",
+      "detail": {
+        "text": "unavailable",
+        "image": "unavailable"
+      }
+    },
+    {
+      "name": "Extraction to AI pipeline regression (TEST DOUBLE)",
+      "status": "passed"
+    }
+  ],
+  "limitations": [
+    "HTTP uses a real loopback server; HTTPS uses intercepted fixture responses with real HTTPS URLs/origins. Live external TLS is not verified. The Web Store URL is tested on Chrome’s certificate-error page because this environment cannot validate external TLS.",
+    "Actual Gemini Nano inference is unverified if the model remains unavailable. The pipeline test double is not a real AI success."
+  ]
+}
