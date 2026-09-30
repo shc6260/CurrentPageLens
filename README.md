@@ -1,5 +1,13 @@
 # Current Page Lens
 
+<details>
+<summary>Language / 언어</summary>
+
+- **한국어**
+- [English](README.en.md)
+
+</details>
+
 현재 보고 있는 웹페이지의 텍스트와 이미지를 **Chrome Built-in AI로 로컬 분석**하는 Chrome 확장프로그램입니다.
 
 분석 프리셋과 사용자의 질문을 함께 적용해 중요한 내용, 확인된 사실, 관찰, 추가 확인이 필요한 항목을 구조화하고 Side Panel에 표시합니다. 일반 웹페이지, 기술 문서, 업무 이슈, 오류 화면 등 다양한 페이지에서 사용할 수 있습니다.
