@@ -13,7 +13,7 @@ export function resultSchema(preset) {
 }
 export const IMAGE_SCHEMA = {type:'object',additionalProperties:false,properties:{id:{type:'string'},visibleTexts:{type:'array',items:{type:'string'}},observations:{type:'array',items:{type:'string'}},uncertain:{type:'array',items:{type:'string'}}},required:['id','visibleTexts','observations','uncertain']};
 export function buildPrompt(preset, userPrompt, pageData, imageResults, outputLanguage) {
-  return `ANALYSIS GUIDANCE:\n${preset.prompt}\nUSER QUESTION (priority over analysis guidance, subject to evidence rules):\n${userPrompt || 'Analyze the important content.'}\nReturn ${outputLanguage==='ko' ? 'Korean (experimental, not an officially supported language)' : 'English'} text. Empty fields must be empty arrays.\nUNTRUSTED PAGE DATA (JSON):\n${JSON.stringify(pageData)}\nIMAGE RESULTS (only status=success contains pixel observations):\n${JSON.stringify(imageResults)}`;
+  return `ANALYSIS GUIDANCE:\n${preset.prompt}\nUSER QUESTION (priority over analysis guidance, subject to evidence rules):\n${userPrompt || 'Analyze the important content.'}\nReturn ${outputLanguage==='ko' ? 'Korean (experimental, not an officially supported language)' : 'English'} text. Empty fields must be empty arrays. Sources with kind=image-analysis and status=success contain prior pixel analysis (visibleTexts, observations, uncertain), possibly split across parts; preserve these distinctions and cite their image ID.\nUNTRUSTED PAGE DATA (JSON):\n${JSON.stringify(pageData)}\nIMAGE RESULTS (only status=success contains pixel observations):\n${JSON.stringify(imageResults)}`;
 }
 export function validateResult(result,schema) {
   if (!result || typeof result !== 'object' || Array.isArray(result)) throw new Error('AI 결과가 JSON 객체가 아닙니다.');

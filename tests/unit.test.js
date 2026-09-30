@@ -81,3 +81,31 @@ test('script injection errors never expose raw browser messages',()=>{
   assert(pageAccessError(new Error('No tab with id: 1'),'https://example.com').message.includes('닫히거나 이동'));
   assert(!pageAccessError(new Error('internal raw details'),'https://example.com').message.includes('raw details'));
 });
+test('inline image metadata never puts base64 filenames into model input',async()=>{
+  const {imageMetadata}=await import('../ai/analyzer.js');
+  const encoded='A'.repeat(180000);const image={id:'image-1',src:'data:image/png;base64,'+encoded,filename:encoded,alt:'diagram'};
+  assert.equal(imageMetadata(image).filename,'');assert(JSON.stringify(imageMetadata(image)).length<200);
+});
+test('context measurement includes schema options and releases rejected clones',async()=>{
+  const {ContextLimitError}=await import('../ai/analyzer.js');let destroyed=false;
+  const engine=new ChromeAIEngine(null);engine.sessions.text={clone:async()=>({contextWindow:9216,contextUsage:200,
+    measureContextUsage:async(p,o)=>{assert(o.responseConstraint);return 42118;},destroy:()=>{destroyed=true;}})};
+  await assert.rejects(engine.run('short text',{type:'object'}),ContextLimitError);assert(destroyed);
+});
+test('oversized image observations split automatically and preserve every evidence character',async()=>{
+  const {ContextLimitError}=await import('../ai/analyzer.js');const preset=BUILTIN_PRESETS[0];
+  const observed='evidence '.repeat(2500);const page={url:'https://example.com',title:'Page',sources:[{id:'source-1',kind:'text',text:'fact',ref:{selector:'#fact'}}],headings:[],links:[],images:[{id:'image-1',src:'data:image/png;base64,xxx',filename:'A'.repeat(180000)}],selection:'',limitations:[],stats:{rawChars:4,collectedChars:4}};
+  const accepted=[];const progress=[];
+  const engine={sessions:{text:{},image:{}},status:{image:'available'},run:async(prompt,schema,options)=>{
+    if(options.type==='image')return {result:{id:'image-1',visibleTexts:[observed],observations:[],uncertain:['Unknown backend']}};
+    assert(prompt.length<10000,'binary metadata leaked');
+    const data=JSON.parse(prompt.split('UNTRUSTED PAGE DATA (JSON):\n')[1].split('\nIMAGE RESULTS')[0]);
+    if(data.sources.reduce((n,s)=>n+s.text.length,0)>900)throw new ContextLimitError(42000,9216);
+    accepted.push(...data.sources);const result={answer:'ok'};for(const f of preset.fields)result[f]=[];
+    return {result};
+  }};
+  const report=await analyzePageData({page,preset,engine,imageCaptures:[{id:'image-1',status:'captured',dataUrl:'data:image/png;base64,aGVsbG8='}],onProgress:e=>progress.push(e)});
+  const imageText=accepted.filter(s=>s.id==='image-1').map(s=>s.text).join('');
+  assert.equal(JSON.parse(imageText).visibleTexts[0],observed);assert.equal(report.ai.image,'success');assert.equal(report.sources[0].ref.selector,'#fact');
+  assert(report.stats.chunkCount>20);assert(progress.some(e=>e.stage==='budget'));
+});

@@ -77,7 +77,7 @@
     const imageNodes = [...new Set([...root.querySelectorAll('img'),...(jira?.attachments || [])])].filter(visible);
     const images = imageNodes.slice(0,80).map((e,i) => {
       const src = e.currentSrc || e.src;
-      let filename = ''; try { filename = decodeURIComponent(new URL(src).pathname.split('/').pop()); } catch {}
+      let filename = ''; try { const url=new URL(src); if(['http:','https:','file:'].includes(url.protocol)) filename=decodeURIComponent(url.pathname.split('/').pop()).slice(0,300); } catch {}
       const rect = e.getBoundingClientRect();
       return {id:`image-${i+1}`,src,alt:e.alt || '',filename,width:e.naturalWidth,height:e.naturalHeight,
         selector:selector(e),ref:{url:location.href,selector:selector(e)},

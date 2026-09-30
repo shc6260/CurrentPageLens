@@ -1,5 +1,5 @@
 {
-  "testedAt": "2026-09-30T00:00:17.238Z",
+  "testedAt": "2026-09-30T00:55:52.061Z",
   "browser": "151.0.7922.34",
   "testHostPermissions": [
     "http://127.0.0.1/*",
@@ -12,7 +12,7 @@
       "name": "MV3 extension loaded / Side Panel document initialized",
       "status": "passed",
       "detail": {
-        "id": "obdgdpihfnopcdgfeafiljmpiionabce",
+        "id": "cklneoammagbfkajldbbkknckkpobnkj",
         "presetCount": 4
       }
     },
@@ -54,6 +54,13 @@
         "sources": 9,
         "comments": 2,
         "images": 1
+      }
+    },
+    {
+      "name": "Inline image filename excludes binary payload",
+      "status": "passed",
+      "detail": {
+        "status": "passed"
       }
     },
     {
@@ -134,30 +141,6 @@
       "detail": "page.goto: net::ERR_CERT_AUTHORITY_INVALID at https://en.wikipedia.org/wiki/ChromeOS\nCall log:\n\u001b[2m  - navigating to \"https://en.wikipedia.org/wiki/ChromeOS\", waiting until \"domcontentloaded\"\u001b[22m\n"
     },
     {
-      "name": "Real public HTML offline: real-docs.html",
-      "status": "passed",
-      "detail": {
-        "originalURL": "https://developer.chrome.com/docs/ai/prompt-api",
-        "title": "The Prompt API  |  AI in Chrome  |  Chrome for Developers",
-        "chars": 21431,
-        "sources": 198,
-        "headings": 24,
-        "truncated": false
-      }
-    },
-    {
-      "name": "Real public HTML offline: real-article.html",
-      "status": "passed",
-      "detail": {
-        "originalURL": "https://en.wikipedia.org/wiki/ChromeOS",
-        "title": "ChromeOS - Wikipedia",
-        "chars": 82430,
-        "sources": 505,
-        "headings": 42,
-        "truncated": false
-      }
-    },
-    {
       "name": "First-use download UX: no create on opening / user prepare / progress / ready (TEST DOUBLE)",
       "status": "passed",
       "detail": true
@@ -166,7 +149,7 @@
   "limitations": [
     "Headless test; Side Panel document and open API exercised, native docked visual layout needs user Chrome confirmation.",
     "No signed-in Jira tab in provided browser inventory; Jira fixture only.",
-    "Test copy adds explicit fixture/public-test host permissions for automation. Production manifest remains activeTab only.",
+    "Test copy adds explicit fixture/public-test host permissions for automation. Production manifest grants ordinary HTTP/HTTPS hosts; test grants are limited to fixtures/public tests.",
     "Mock analysis/download results verify plumbing and UI, not Gemini Nano quality, actual model download or real AI success."
   ]
 }

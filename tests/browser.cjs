@@ -40,6 +40,11 @@ const fs=require('node:fs/promises');const os=require('node:os');const path=requ
       if(name==='jira'){assert.equal(page.stats.commentsDetected,2);assert(page.sources.some(s=>s.kind==='comment'));assert(page.sources.some(s=>s.kind==='description'));assert(text.includes('before assuming a database error'));assert.equal(page.images.length,1);}
       record(`${name} DOM extraction`,{chars:page.stats.collectedChars,sources:page.sources.length,comments:page.stats.commentsDetected,images:page.images.length});
     }
+    await target.evaluate(()=>{const image=document.createElement('img');image.id='inline-budget-test';image.src='data:image/svg+xml;base64,'+btoa('<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40">'+' '.repeat(180000)+'</svg>');document.querySelector('main').append(image);});
+    await target.waitForFunction(()=>document.querySelector('#inline-budget-test').complete);
+    const inlinePage=await collect();assert.equal(inlinePage.images.find(i=>i.selector==='#inline-budget-test').filename,'');
+    record('Inline image filename excludes binary payload',{status:'passed'});
+    await target.evaluate(()=>document.querySelector('#inline-budget-test').remove());
     const jira=pages.at(-1);const images=await panel.evaluate(async({tabId,page})=>{const m=await import('../core/page-service.js');return m.collectImages({id:tabId},page);},{tabId,page:jira});
     assert(images.some(i=>i.status==='captured'));record('Image pixel capture from same-origin page',{status:images[0].status,width:images[0].width});
     await target.evaluate(port=>{const image=document.createElement('img');image.src=`http://localhost:${port}/screen.svg`;image.width=600;image.height=180;document.querySelector('main').append(image);},port);
@@ -100,7 +105,7 @@ const fs=require('node:fs/promises');const os=require('node:os');const path=requ
     assert((await downloadPanel.locator('#model-state').textContent()).includes('바로 사용 가능'));
     record('First-use download UX: no create on opening / user prepare / progress / ready (TEST DOUBLE)',true);
     await downloadPanel.close();
-    const report={testedAt:new Date().toISOString(),browser:await context.browser().version(),testHostPermissions:manifest.host_permissions,checks,limitations:['Headless test; Side Panel document and open API exercised, native docked visual layout needs user Chrome confirmation.','No signed-in Jira tab in provided browser inventory; Jira fixture only.','Test copy adds explicit fixture/public-test host permissions for automation. Production manifest remains activeTab only.','Mock analysis/download results verify plumbing and UI, not Gemini Nano quality, actual model download or real AI success.']};
+    const report={testedAt:new Date().toISOString(),browser:await context.browser().version(),testHostPermissions:manifest.host_permissions,checks,limitations:['Headless test; Side Panel document and open API exercised, native docked visual layout needs user Chrome confirmation.','No signed-in Jira tab in provided browser inventory; Jira fixture only.','Test copy adds explicit fixture/public-test host permissions for automation. Production manifest grants ordinary HTTP/HTTPS hosts; test grants are limited to fixtures/public tests.','Mock analysis/download results verify plumbing and UI, not Gemini Nano quality, actual model download or real AI success.']};
     await fs.writeFile(path.join(root,'tests','browser-results.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
   } finally {await context?.close();await new Promise(resolve=>server.close(resolve));await fs.rm(temp,{recursive:true,force:true});}
 })().catch(e=>{console.error(e);process.exitCode=1;});
